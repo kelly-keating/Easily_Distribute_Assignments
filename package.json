@@ -12,7 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^4.0.0",
+    "github-readme-retriever": "^0.1.7",
     "knex": "^0.14.2",
+    "octonode": "^0.9.1",
     "readline": "^1.3.0",
     "sqlite3": "^3.1.13"
   }

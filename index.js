@@ -2,7 +2,7 @@ require('dotenv')
 const readline = require('readline')
 const db = require('./src/db')
 const createStudent = require('./src/createStudent')
-
+const push = require('./waffler/push')
 
 console.log("starting")
 
@@ -59,7 +59,7 @@ function promptStudents(students) {
 
 }
 
-function selectStudent({name, last_name, github_name, current_sprint}) {
+function selectStudent({name, last_name, github_name, cohort_name, current_sprint}) {
   console.log("");
   console.log(`${name} ${last_name} (${github_name}) is on sprint ${current_sprint}`);
   console.log("");
@@ -70,14 +70,14 @@ function selectStudent({name, last_name, github_name, current_sprint}) {
   const rl = create()
   rl.question('What would you like to do?: ', answer => {
     rl.close()
-    if (answer.toLowerCase() == 'p' && current_sprint < 9) pushSprint(github_name, current_sprint + 1)
+    if (answer.toLowerCase() == 'p' && current_sprint < 9) pushSprint(github_name, cohort_name, current_sprint + 1)
     if (answer.toLowerCase() == 's' && current_sprint < 9) specifySprint(github_name, current_sprint)
     if (answer.toLowerCase() == "c") startPrompt()
     if (answer.toLowerCase() == "del" || answer == 'D') deleteStudent(github_name)
   })
 }
 
-function specifySprint(github_name, current_sprint) {
+function specifySprint(github_name, cohort_name, current_sprint) {
   console.log("");
   console.log(`${github_name} is on ${current_sprint}`);
   console.log("");
@@ -85,17 +85,19 @@ function specifySprint(github_name, current_sprint) {
   rl.question('What sprint do you want to push? (1-9): ', answer => {
     rl.close()
     if (!answer) return startPrompt()
-    else if (answer <= 9 && answer > 0) return pushSprint(github_name, Number(answer))
+    else if (answer <= 9 && answer > 0) return pushSprint(github_name, cohort_name. Number(answer))
     else return startPrompt()
   })
 }
 
-function pushSprint(github_name, sprint) {
+function pushSprint(github_name, cohort, sprint) {
   console.log("");
   console.log("pushing next sprint", sprint);
   console.log("");
-  db.updateSprint(github_name, sprint)
+  push({sprint, cohort, github_name})
+    .then(() => db.updateSprint(github_name, sprint))
     .then(() => {
+      console.log('\nDone.')
       console.log(`Sprint ${sprint} pushed to ${github_name}`);
       startPrompt()
     })

@@ -1,15 +1,21 @@
-import github from 'octonode'
+const github = require('octonode')
 
-export default function postAssignments (assignments, students, cohort) {
+module.exports = {
+  postAssignments,
+  createIssues,
+  createIssue
+}
+
+function postAssignments (assignments, student, cohort) {
   let queue = assignments
     .map((assignment) => {
-      return assign(assignment, students)
+      return assign(assignment, [student])
     })
     .reduce((a, b) => {
       return a.concat(b)
     }, [])
 
-  console.log(`[ Issues: ${assignments.length} Students: ${students.length} Queue size: ${queue.length} ]`)
+  console.log(`[ Issues: ${assignments.length} Student: ${student} Queue size: ${queue.length} ]`)
   return createIssues(queue, cohort, 2000)
 }
 
@@ -19,7 +25,7 @@ function assign (issue, assignees) {
   })
 }
 
-export function createIssues (queue, cohort, delay) {
+function createIssues (queue, cohort, delay) {
   // Requests from a single client, requests which trigger notifications, and large numbers of requests
   // sent concurrently are all subject to abuse rate limiting:
   // https://developer.github.com/guides/best-practices-for-integrators/#dealing-with-abuse-rate-limits
@@ -31,14 +37,14 @@ export function createIssues (queue, cohort, delay) {
     let issue = queue.pop()
     if (!issue) {
       clearInterval(id)
-      return Promise.all(promises).then(() => { console.log('\nDone.') })
+      return Promise.all(promises)
     }
     promises.push(createIssue(client, issue, cohort, cohort))
     process.stdout.write('.')
   }, delay)
 }
 
-export function createIssue (client, issue, owner, repo) {
+function createIssue (client, issue, owner, repo) {
   return new Promise((resolve, reject) => {
     client.repo(`${owner}/${repo}`)
       .issue(issue, (err, response) => {

@@ -1,23 +1,24 @@
-import getAssignments from './assignments'
-import getStudents from './students'
-import postAssignments from './post'
+const {getAssignments} = require('./assignments')
+const getStudent = require('./students')
+const {postAssignments} = require('./post')
 
-function push ({sprint, cohort, assign, branch, except}) {
+function push ({sprint, cohort, github_name}) {
   if (!process.env['WTR_ACCESS_TOKEN']) {
     console.error('Please set WTR_ACCESS_TOKEN')
     return
   }
 
-  console.log('Getting assignments and students...')
-
-  Promise.all([
-    getAssignments(sprint, branch),
-    getStudents(cohort, assign, except)
-  ])
-    .then(([assignments, students]) => {
-      return postAssignments(assignments, students, cohort)
+  console.log('Getting assignments and student...')
+  return new Promise(function(resolve, reject) {
+    Promise.all([
+      getAssignments(sprint),
+      getStudent(cohort, github_name)
+    ])
+    .then(([assignments, student]) => {
+      resolve(postAssignments(assignments, student, cohort))
     })
-    .catch(console.error)
+    .catch(reject)
+  });
 }
 
-export default push
+module.exports = push

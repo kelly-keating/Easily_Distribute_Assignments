@@ -1,7 +1,17 @@
-import * as grr from 'github-readme-retriever'
+const grr = require('github-readme-retriever')
 
-export default function getAssignments (sprint, branch) {
-  return getList(sprint, branch)
+module.exports = {
+  getAssignments,
+  getList,
+  checkList,
+  getFiles,
+  makeIssues,
+  sort
+}
+
+function getAssignments (sprint) {
+  console.log({sprint});
+  return getList(sprint)
     .then(checkList)
     .then(getFiles)
     .then((files) => {
@@ -10,12 +20,12 @@ export default function getAssignments (sprint, branch) {
     .then(sort)
 }
 
-export function getList (sprint, branch) {
+function getList (sprint) {
   const config = {
     owner: 'dev-academy-programme',
     repo: 'curriculum-private',
     path: 'assignments',
-    branch: branch
+    branch: 'master'
   }
   return grr.getList(config, process.env['WTR_ACCESS_TOKEN'])
     .then((assignments) => {
@@ -24,7 +34,8 @@ export function getList (sprint, branch) {
     })
 }
 
-export function checkList (assignments) {
+function checkList (assignments) {
+  console.log({assignments});
   if (assignments.paths.find(isNumeric)) {
     return assignments
   }
@@ -36,20 +47,20 @@ function isNumeric (assignment) {
   return !isNaN(name[0])
 }
 
-export function getFiles (assignments) {
+function getFiles (assignments) {
   return grr.getFiles(assignments, process.env['WTR_ACCESS_TOKEN'])
     .then((files) => {
       return files
     })
 }
 
-export function makeIssues (assignments, sprint) {
+function makeIssues (assignments, sprint) {
   return assignments.map((assignment) => {
     return Object.assign({ labels: [ `sprint-${Math.floor(sprint)}` ] }, assignment)
   })
 }
 
-export function sort (issues) {
+function sort (issues) {
   return issues
     .map(convertVersions)
     .sort(lexicographicalSort)
@@ -105,18 +116,8 @@ function matchSprint (sprint, assignment) {
 }
 
 function sprintPaths (assignments, sprint) {
-  if (sprint.toString().match(/^[\d]+\.[\d]+$/)) {
-    const match = assignments.paths.find((path) => {
-      return matchSingle(sprint, path)
-    })
-    if (match) {
-      return [ match ]
-    }
-    return Promise.reject(new Error('No match for that asssignment'))
-  }
-
   return assignments.paths
     .filter((path) => {
-      return matchSprint(sprint, path)
+      return path.includes(`assignments/${sprint}`)
     })
 }
