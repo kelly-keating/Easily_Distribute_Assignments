@@ -81,7 +81,7 @@ function askSprint (student) {
     const rl = create()
     rl.question("What Sprint is the student currently on?: ", answer => {
       rl.close()
-      if (!answer) student.current_sprint = 1
+      if (!answer) student.current_sprint = 0
       else if (isNaN(answer)) return resolve(askSprint(student))
       else student.current_sprint = Number(answer)
       resolve(student)

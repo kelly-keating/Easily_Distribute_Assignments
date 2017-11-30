@@ -1,4 +1,4 @@
-require('dotenv')
+require('dotenv').config()
 const readline = require('readline')
 const db = require('./src/db')
 const createStudent = require('./src/createStudent')
@@ -62,6 +62,7 @@ function promptStudents(students) {
 function selectStudent({name, last_name, github_name, cohort_name, current_sprint}) {
   console.log("");
   console.log(`${name} ${last_name} (${github_name}) is on sprint ${current_sprint}`);
+  console.log(cohort_name);
   console.log("");
   if (current_sprint < 9) console.log(`p: push next sprint (${current_sprint + 1})`)
   if (current_sprint < 8) console.log("s: Specify sprint to push")
@@ -71,7 +72,7 @@ function selectStudent({name, last_name, github_name, cohort_name, current_sprin
   rl.question('What would you like to do?: ', answer => {
     rl.close()
     if (answer.toLowerCase() == 'p' && current_sprint < 9) pushSprint(github_name, cohort_name, current_sprint + 1)
-    if (answer.toLowerCase() == 's' && current_sprint < 9) specifySprint(github_name, current_sprint)
+    if (answer.toLowerCase() == 's' && current_sprint < 9) specifySprint(github_name, cohort_name, current_sprint)
     if (answer.toLowerCase() == "c") startPrompt()
     if (answer.toLowerCase() == "del" || answer == 'D') deleteStudent(github_name)
   })
@@ -84,9 +85,9 @@ function specifySprint(github_name, cohort_name, current_sprint) {
   const rl = create()
   rl.question('What sprint do you want to push? (1-9): ', answer => {
     rl.close()
-    if (!answer) return startPrompt()
-    else if (answer <= 9 && answer > 0) return pushSprint(github_name, cohort_name. Number(answer))
-    else return startPrompt()
+    if (!answer || isNaN(answer)) startPrompt()
+    else if (answer <= 9 && answer > 0) pushSprint(github_name, cohort_name,  answer)
+    else startPrompt()
   })
 }
 
