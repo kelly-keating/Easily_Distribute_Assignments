@@ -12,6 +12,9 @@ module.exports = {
   updateSprint: (github_name, current_sprint) => knex('students')
     .update({current_sprint})
     .where('students.github_name', github_name),
+  deleteStudent: (github_name) => knex('students')
+    .where('github_name', github_name)
+    .del(),
   getCohorts: () => knex('cohorts'),
   listAll: () => knex('students')
     .join('cohorts', 'students.cohort_id', 'like', 'cohorts.id')

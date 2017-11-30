@@ -10,17 +10,32 @@ function create() {
 
 module.exports = () => {
   return askName()
-    .then(student => {
-      console.log({student});
-      return db.addStudent(student)
-    })
+    .then(student => assertCorrect(student))
+    .then(student => db.addStudent(student))
     .catch((err) => console.log({err}))
 }
 
-function askName (student) {
+function assertCorrect(student) {
+  return new Promise(function(resolve, reject) {
+    console.log(" ");
+    for (let key in student) {
+      console.log(`${key}: ${student[key]}`);
+    }
+    console.log(" ");
+    const rl = create()
+    rl.question('Is this correct?: (y/n)', answer => {
+      rl.close()
+      if (!answer || answer.toLowerCase() == 'y') resolve(student)
+      else resolve(askName())
+    })
+  });
+}
+
+function askName () {
   return new Promise(function(resolve, reject) {
     const rl = create()
     const student = {}
+    console.log("");
     rl.question("What is the students name? (first last): ", answer => {
       rl.close()
       if (!answer) reject("No name given")
@@ -69,7 +84,6 @@ function askSprint (student) {
       if (!answer) student.current_sprint = 1
       else if (isNaN(answer)) return resolve(askSprint(student))
       else student.current_sprint = Number(answer)
-      console.log({student});
       resolve(student)
     })
   });

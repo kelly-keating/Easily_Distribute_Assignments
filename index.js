@@ -17,6 +17,7 @@ function create () {
 startPrompt()
 
 function startPrompt () {
+  console.log("");
   const rl = create()
   rl.question("Enter a student name to push assignments, or type a to add: ", (answer) => {
     rl.close();
@@ -61,23 +62,27 @@ function promptStudents(students) {
 function selectStudent({name, last_name, github_name, current_sprint}) {
   console.log("");
   console.log(`${name} ${last_name} (${github_name}) is on sprint ${current_sprint}`);
+  console.log("");
   if (current_sprint < 9) console.log(`p: push next sprint (${current_sprint + 1})`)
   if (current_sprint < 8) console.log("s: Specify sprint to push")
+  console.log("D / del: Delete");
   console.log("c: Cancel");
   const rl = create()
-  rl.question('What would you like to do?', answer => {
+  rl.question('What would you like to do?: ', answer => {
     rl.close()
     if (answer.toLowerCase() == 'p' && current_sprint < 9) pushSprint(github_name, current_sprint + 1)
     if (answer.toLowerCase() == 's' && current_sprint < 9) specifySprint(github_name, current_sprint)
     if (answer.toLowerCase() == "c") startPrompt()
-
+    if (answer.toLowerCase() == "del" || answer == 'D') deleteStudent(github_name)
   })
 }
 
 function specifySprint(github_name, current_sprint) {
+  console.log("");
   console.log(`${github_name} is on ${current_sprint}`);
+  console.log("");
   const rl = create()
-  rl.question('What sprint do you want to push? (1-9)', answer => {
+  rl.question('What sprint do you want to push? (1-9): ', answer => {
     rl.close()
     if (!answer) return startPrompt()
     else if (answer <= 9 && answer > 0) return pushSprint(github_name, Number(answer))
@@ -86,10 +91,20 @@ function specifySprint(github_name, current_sprint) {
 }
 
 function pushSprint(github_name, sprint) {
+  console.log("");
   console.log("pushing next sprint", sprint);
+  console.log("");
   db.updateSprint(github_name, sprint)
     .then(() => {
       console.log(`Sprint ${sprint} pushed to ${github_name}`);
+      startPrompt()
+    })
+}
+
+function deleteStudent(github_name) {
+  db.deleteStudent(github_name)
+    .then(() => {
+      console.log(`${github_name} successfully deleted`);
       startPrompt()
     })
 }
