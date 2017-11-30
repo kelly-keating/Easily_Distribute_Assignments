@@ -9,6 +9,9 @@ module.exports = {
     .join('cohorts', 'students.cohort_id', 'cohorts.id'),
   addStudent: (student) => knex('students')
     .insert(student),
+  updateSprint: (github_name, current_sprint) => knex('students')
+    .update({current_sprint})
+    .where('students.github_name', github_name),
   getCohorts: () => knex('cohorts'),
   listAll: () => knex('students')
     .join('cohorts', 'students.cohort_id', 'like', 'cohorts.id')

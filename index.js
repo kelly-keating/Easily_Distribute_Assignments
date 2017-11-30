@@ -67,9 +67,29 @@ function selectStudent({name, last_name, github_name, current_sprint}) {
   const rl = create()
   rl.question('What would you like to do?', answer => {
     rl.close()
-    if (answer.toLowerCase() == 'p' && current_sprint < 9) console.log("pushing next sprint", current_sprint + 1);
-    if (answer.toLowerCase() == 's' && current_sprint < 9) console.log("specify sprint");
+    if (answer.toLowerCase() == 'p' && current_sprint < 9) pushSprint(github_name, current_sprint + 1)
+    if (answer.toLowerCase() == 's' && current_sprint < 9) specifySprint(github_name, current_sprint)
     if (answer.toLowerCase() == "c") startPrompt()
 
   })
+}
+
+function specifySprint(github_name, current_sprint) {
+  console.log(`${github_name} is on ${current_sprint}`);
+  const rl = create()
+  rl.question('What sprint do you want to push? (1-9)', answer => {
+    rl.close()
+    if (!answer) return startPrompt()
+    else if (answer <= 9 && answer > 0) return pushSprint(github_name, Number(answer))
+    else return startPrompt()
+  })
+}
+
+function pushSprint(github_name, sprint) {
+  console.log("pushing next sprint", sprint);
+  db.updateSprint(github_name, sprint)
+    .then(() => {
+      console.log(`Sprint ${sprint} pushed to ${github_name}`);
+      startPrompt()
+    })
 }
