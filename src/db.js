@@ -1,6 +1,12 @@
 const config = require('../knexfile').development
 const knex = require('knex')(config)
 
+function fill (string, len) {
+  let size = len- string.toString().length
+  if (size < 0) size = 0
+  return `${string}${Array(size).fill(" ").join('')}`
+}
+
 module.exports = {
   findStudent: (name) => knex('students')
     .where('name', 'like', `${name}%`)
@@ -18,5 +24,8 @@ module.exports = {
   getCohorts: () => knex('cohorts'),
   listAll: () => knex('students')
     .join('cohorts', 'students.cohort_id', 'like', 'cohorts.id')
-    .then(students => console.log({students}))
+    .orderBy('current_sprint', 'asc')
+    .then(students => {
+      students.forEach(({name, last_name, cohort_name, current_sprint, github_name}) => console.log(`${fill(name, 15)}${fill(last_name, 15)}${fill(cohort_name, 15)}${fill(current_sprint, 5)} @${fill(github_name, 20)}`))
+    })
 }
