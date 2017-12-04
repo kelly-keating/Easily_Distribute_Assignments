@@ -24,7 +24,7 @@ module.exports = {
   getCohorts: () => knex('cohorts'),
   listAll: () => knex('students')
     .join('cohorts', 'students.cohort_id', 'like', 'cohorts.id')
-    .orderBy('current_sprint', 'asc')
+    .orderBy('name', 'asc')
     .then(students => {
       students.forEach(({name, last_name, cohort_name, current_sprint, github_name}) => console.log(`${fill(name, 15)}${fill(last_name, 15)}${fill(cohort_name, 15)}${fill(current_sprint, 5)} @${fill(github_name, 20)}`))
     })
