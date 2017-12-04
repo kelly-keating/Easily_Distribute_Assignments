@@ -40,7 +40,7 @@ function createIssues (queue, cohort, delay) {
       return Promise.all(promises)
     }
     promises.push(createIssue(client, issue, cohort, cohort))
-    // process.stdout.write('.')
+    // process.stdout.write('.ha')
   }, delay)
 }
 

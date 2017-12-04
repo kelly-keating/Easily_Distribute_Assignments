@@ -3,7 +3,7 @@ const readline = require('readline')
 const db = require('./src/db')
 const createStudent = require('./src/createStudent')
 const push = require('./waffler/push')
-
+console.log(process.env.WTR_ACCESS_TOKEN);
 console.log("starting")
 
 
