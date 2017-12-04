@@ -40,8 +40,8 @@ function askName () {
       rl.close()
       if (!answer) reject("No name given")
       let names = answer.split(' ')
-      student.name = names[0]
-      student.last_name = names[1] || ""
+      student.name = names.shift()
+      student.last_name = names.join(' ') || " "
       resolve(askGithub(student))
     })
   });
