@@ -1,13 +1,10 @@
 
 exports.seed = function(knex, Promise) {
-  // Deletes ALL existing entries
-  // return knex('students').del()
-  //   .then(function () {
-  //     // Inserts seed entries
-  //     return knex('students').insert([
-  //       {id: 1, name: 'Harrison', last_name: 'Symes', github_name: 'harrison-symes', current_sprint: 1, cohort_id: 1},
-  //       {id: 2, name: 'Kimmi', last_name: 'Rindell', github_name: 'rkimmi', current_sprint: 6, cohort_id: 2},
-  //       {id: 3, name: 'Hannah', last_name: 'Fake', github_name: 'fake-student', current_sprint: 9, cohort_id: 1}
-  //     ]);
-  //   });
+  return knex('students').insert([
+    {name: 'Harrison', last_name: 'Symes', github_name: 'harrison-symes', current_sprint: 1, cohort_id: 1, last_update: '2017-11-12T00:00:00+13:00'},
+    {name: 'Harrison', last_name: 'Symes', github_name: 'harrison-symes', current_sprint: 1, cohort_id: 1, last_update: '2017-11-29T00:00:00+13:00'},
+    {name: 'Harrison', last_name: 'Symes', github_name: 'harrison-symes', current_sprint: 1, cohort_id: 1, last_update: '2017-11-21T00:00:00+13:00'},
+    {name: 'Harrison', last_name: 'Symes', github_name: 'harrison-symes', current_sprint: 1, cohort_id: 1, last_update: '2017-11-02T00:00:00+13:00'},
+    {name: 'Harrison', last_name: 'Symes', github_name: 'harrison-symes', current_sprint: 1, cohort_id: 1, last_update: '2017-10-10T00:00:00+13:00'},
+  ]);
 };

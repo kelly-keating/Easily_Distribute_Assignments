@@ -1,7 +1,18 @@
 const config = require('../knexfile').development
 const knex = require('knex')(config)
 
+const moment = require('moment')
 const colors = require('colors')
+
+function flag (last_update) {
+  const fromNow = moment(last_update).fromNow()
+  let colour = 'cyan'
+  if (fromNow.split(' ').includes('days')) colour = fromNow.split(' ')[0] > 7 ? (fromNow.split(' ')[0] > 14 ? 'red': 'yellow') : 'green'
+  else if (fromNow.split(' ').includes('weeks')) colour = 'red'
+  else if (fromNow.split(' ').includes('month')) colour = 'red'
+  else if (fromNow.split(' ').includes('months')) colour = 'gray'
+  return colors[colour](moment(last_update).fromNow())
+}
 
 function f (string, len, colour) {
   let size = len- string.toString().length
@@ -9,8 +20,8 @@ function f (string, len, colour) {
   return colors[colour || 'white'](`${string}${Array(size).fill(" ").join('')}`)
 }
 
-function printStudent ({name, last_name, cohort_name, current_sprint, github_name, cl_colour}) {
-  return console.log(`${f(name, 15)}${f(last_name, 15)} ${f(cohort_name, 15, cl_colour)}${f(current_sprint, 5)} @${f(github_name, 20)}`)
+function printStudent ({name, last_name, cohort_name, current_sprint, github_name, cl_colour, last_update}) {
+  return console.log(`${f(name, 15)}${f(last_name, 15)} ${f(cohort_name, 15, cl_colour)}${f(current_sprint, 5)} @${f(github_name, 20)} ${flag(last_update)}`)
 }
 
 function headers () {
