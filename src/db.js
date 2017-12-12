@@ -6,13 +6,13 @@ const {tz} = require('moment-timezone')
 const colors = require('colors')
 
 function flag (last_update) {
-  const fromNow = moment(last_update).fromNow()
+  const fromNow = moment(last_update).tz('Pacific/Auckland').fromNow()
   let colour = 'cyan'
   if (fromNow.split(' ').includes('days')) colour = fromNow.split(' ')[0] > 7 ? (fromNow.split(' ')[0] > 14 ? 'red': 'yellow') : 'green'
   else if (fromNow.split(' ').includes('weeks')) colour = 'red'
   else if (fromNow.split(' ').includes('month')) colour = 'red'
   else if (fromNow.split(' ').includes('months')) colour = 'gray'
-  return colors[colour](moment(last_update).fromNow())
+  return colors[colour](fromNow)
 }
 
 function f (string, len, colour) {
@@ -22,11 +22,11 @@ function f (string, len, colour) {
 }
 
 function printStudent ({name, last_name, cohort_name, current_sprint, github_name, cl_colour, last_update}) {
-  return console.log(`${f(name, 15)}${f(last_name, 15)} ${f(cohort_name, 15, cl_colour)}${f(current_sprint, 5)} @${f(github_name, 30)} ${flag(last_update)}`)
+  return console.log(`${f(name, 15)}${f(last_name, 15)} ${f(cohort_name, 20, cl_colour)}${f(current_sprint, 5)} @${f(github_name, 30)} ${flag(last_update)}`)
 }
 
 function headers () {
-  return console.log(`${f("name", 15, "underline")}${f("last name", 15, "underline")} ${f("cohortname", 15, "underline")}${f("sprnt", 5, "underline")} @${f("githubname", 20, "underline")}`)
+  return console.log(`${f("name", 15, "underline")}${f("last name", 15, "underline")} ${f("cohortname", 20, "underline")}${f("sprnt", 5, "underline")} @${f("githubname", 20, "underline")}`)
 }
 
 module.exports = {
@@ -46,9 +46,10 @@ module.exports = {
   getCohorts: () => knex('cohorts'),
   listAll: () => knex('students')
     .join('cohorts', 'students.cohort_id', 'like', 'cohorts.id')
-    .orderBy('name', 'asc')
+    .orderBy('current_sprint', 'asc')
     .then(students => {
       headers()
       students.forEach(printStudent)
+      console.log(`Students in system: ${students.length}`);
     })
 }
