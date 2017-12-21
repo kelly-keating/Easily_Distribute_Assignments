@@ -44,7 +44,7 @@ function checkList (assignments) {
 
 function isNumeric (assignment) {
   const name = assignment.split('/').pop()
-  return !isNaN(name[0])
+  return !isNaN(name[0]) || names[0] == 'p'
 }
 
 function getFiles (assignments) {
@@ -103,6 +103,7 @@ function matchSingle (sprint, assignment) {
 }
 
 function matchSprint (sprint, assignment) {
+  console.log({sprint, assignment});
   const name = assignment.split('/').pop()
   if (name.split('-')[0] === 'p') {
     return true
@@ -118,6 +119,6 @@ function matchSprint (sprint, assignment) {
 function sprintPaths (assignments, sprint) {
   return assignments.paths
     .filter((path) => {
-      return path.includes(`assignments/${sprint}`)
+      return path.includes(`assignments/${sprint}`) || path.includes('assignments/p')
     })
 }

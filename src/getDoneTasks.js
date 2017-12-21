@@ -1,15 +1,16 @@
 const github = require('octonode2')
 var client = github.client(process.env['WTR_ACCESS_TOKEN'])
 
-
-closeDone(1, 'harakeke-2017/harakeke-2017')
+module.exports = () => {
+  return closeDone(1, 'harakeke-2017/harakeke-2017')
   .then(() => closeDone(1, 'kahu-2018/kahu-2018'))
   .then(() => console.log("done"))
   .catch((err) => console.log(err))
+}
 
 function closeDone(page, repo) {
   return new Promise(function(resolve, reject) {
-    if (page > 50) resolve()
+    if (page > 30) resolve()
     else {
       const ghrepo = client.repo(repo)
       console.log("page", page);

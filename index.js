@@ -3,6 +3,7 @@ const readline = require('readline')
 const db = require('./src/db')
 const createStudent = require('./src/createStudent')
 const push = require('./waffler/push')
+const markDone = require('./src/getDoneTasks')
 console.log(process.env.WTR_ACCESS_TOKEN);
 console.log("starting")
 
@@ -27,6 +28,8 @@ function startPrompt () {
         startPrompt()
       })
     else if (answer == 'l') db.listAll()
+      .then(() => startPrompt())
+    else if (answer == "D") markDone()
       .then(() => startPrompt())
     else db.findStudent(answer)
       .then(promptStudents)
