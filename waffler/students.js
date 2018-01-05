@@ -3,7 +3,7 @@ const github = require('octonode')
 module.exports = getStudent
 
 function getStudent (cohort, github_name) {
-  return getTeam(cohort)
+  return getTeam('phase-0')
     .then(team => getTeamMember(team, github_name))
 }
 
@@ -23,7 +23,7 @@ function getTeam (cohort) {
   const client = github.client(process.env['WTR_ACCESS_TOKEN'])
 
   return new Promise((resolve, reject) => {
-    client.org(cohort)
+    client.org('phase-0')
       .teams((err, teams) => {
         if (err) {
           return reject(new Error("Can't get teams for that org."))
@@ -34,7 +34,7 @@ function getTeam (cohort) {
         if (!team) {
           return reject(new Error(`Can't find team for '${cohort}' on org '${cohort}'.`))
         }
-
+        console.log({team});
         return resolve(team)
       })
   })

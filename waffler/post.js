@@ -39,7 +39,7 @@ function createIssues (queue, cohort, delay) {
       clearInterval(id)
       return Promise.all(promises)
     }
-    promises.push(createIssue(client, issue, cohort, cohort))
+    promises.push(createIssue(client, issue, 'phase-0', cohort))
     // process.stdout.write('.ha')
   }, delay)
 }
