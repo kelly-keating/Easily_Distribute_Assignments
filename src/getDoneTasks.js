@@ -2,8 +2,8 @@ const github = require('octonode2')
 var client = github.client(process.env['WTR_ACCESS_TOKEN'])
 
 module.exports = () => {
-  return closeDone(1, 'harakeke-2017/harakeke-2017')
-  .then(() => closeDone(1, 'kahu-2018/kahu-2018'))
+  return closeDone(1, 'phase-0/harakeke-2017')
+  .then(() => closeDone(1, 'phase-0/kahu-2018'))
   .then(() => console.log("done"))
   .catch((err) => console.log(err))
 }
