@@ -62,8 +62,11 @@ function createIssue (client, cohort, issues, idx) {
           console.error(err)
           return reject(new Error(`Couldn't post issue: ${issue.title}.`))
         }
-        if (issues.length == idx + 1) resolve('done')
-        else setTimeout(() => createIssue(client, cohort, issues, idx + 1), 2000)
+        if (issues.length == idx + 1) {
+          console.log("finished issues", idx);
+          resolve('done')
+        }
+        else setTimeout(() =>  resolve(createIssue(client, cohort, issues, idx + 1)), 2000)
       })
   })
 }
