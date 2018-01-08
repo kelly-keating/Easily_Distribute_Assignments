@@ -18,7 +18,10 @@ function postAssignments (assignments, student, cohort) {
   console.log(`[ Issues: ${assignments.length} Student: ${student} Queue size: ${queue.length} ]`)
   return new Promise(function(resolve, reject) {
     createIssues(queue, cohort, 2000)
-      .then(msg => resolve(msg))
+      .then(msg => {
+        console.log("post Assignments", msg);
+        resolve(msg)
+      })
   });
 }
 
@@ -32,9 +35,13 @@ function createIssues (queue, cohort, delay) {
   // https://developer.github.com/guides/best-practices-for-integrators/#dealing-with-abuse-rate-limits
   process.stdout.write(`Posting assignments using ${delay / 1000}s delay...`)
   const client = github.client(process.env['WTR_ACCESS_TOKEN'])
-
-  return createIssue(client, cohort, queue, 0)
-    .then((msg) => msg)
+  return new Promise(function(resolve, reject) {
+    createIssue(client, cohort, queue, 0)
+      .then((msg) => {
+        console.log("create issues", msg);
+        resolve(msg)
+      })
+  });
   // const id = setInterval(() => {
   //   let issue = queue.pop()
   //   if (!issue) {
@@ -48,14 +55,15 @@ function createIssues (queue, cohort, delay) {
 
 function createIssue (client, cohort, issues, idx) {
   return new Promise((resolve, reject) => {
+    let issue = issues[idx]
     client.repo(`phase-0/${cohort}`)
       .issue(issue, (err, response) => {
         if (err) {
           console.error(err)
           return reject(new Error(`Couldn't post issue: ${issue.title}.`))
         }
-        if (issues.length-1 == idx) resolve('done')
-        else setTimeout(() => resolve(createIssue(client, issues, idx + 1)), 2000)
+        if (issues.length == idx + 1) resolve('done')
+        else setTimeout(() => createIssue(client, cohort, issues, idx + 1), 2000)
       })
   })
 }
