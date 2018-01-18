@@ -36,7 +36,7 @@ function createIssues (queue, cohort, delay) {
   process.stdout.write(`Posting assignments using ${delay / 1000}s delay...`)
   const client = github.client(process.env['WTR_ACCESS_TOKEN'])
   return new Promise(function(resolve, reject) {
-    createIssue(client, cohort, queue, 0)
+    createIssue(client, cohort, queue, queue.length - 1)
       .then((msg) => {
         console.log("create issues", msg);
         resolve(msg)
@@ -56,17 +56,18 @@ function createIssues (queue, cohort, delay) {
 function createIssue (client, cohort, issues, idx) {
   return new Promise((resolve, reject) => {
     let issue = issues[idx]
+    console.log({idx});
     client.repo(`phase-0/${cohort}`)
       .issue(issue, (err, response) => {
         if (err) {
           console.error(err)
           return reject(new Error(`Couldn't post issue: ${issue.title}.`))
         }
-        if (issues.length == idx + 1) {
+        if (idx === 0) {
           console.log("finished issues", idx);
           resolve('done')
         }
-        else setTimeout(() =>  resolve(createIssue(client, cohort, issues, idx + 1)), 2000)
+        else setTimeout(() =>  resolve(createIssue(client, cohort, issues, idx-1)), 2000)
       })
   })
 }
