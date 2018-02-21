@@ -29,8 +29,6 @@ function startPrompt () {
       })
     else if (answer == 'l') db.listAll()
       .then(() => startPrompt())
-    else if (answer == "D") markDone()
-      .then(() => startPrompt())
     else db.findStudent(answer)
       .then(promptStudents)
   });
