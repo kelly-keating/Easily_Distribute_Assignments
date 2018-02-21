@@ -15,7 +15,11 @@ function push ({sprint, cohort, github_name}) {
       getStudent(cohort, github_name)
     ])
     .then(([assignments, student]) => {
-      resolve(postAssignments(assignments, student, cohort))
+      postAssignments(assignments, student, cohort)
+        .then(msg => {
+          console.log("push", msg);
+          resolve(msg)
+        })
     })
     .catch(reject)
   });

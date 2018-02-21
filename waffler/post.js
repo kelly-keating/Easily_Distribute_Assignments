@@ -9,20 +9,24 @@ module.exports = {
 function postAssignments (assignments, student, cohort) {
   let queue = assignments
     .map((assignment) => {
-      return assign(assignment, [student])
+      return assign(assignment, student)
     })
     .reduce((a, b) => {
       return a.concat(b)
     }, [])
 
   console.log(`[ Issues: ${assignments.length} Student: ${student} Queue size: ${queue.length} ]`)
-  return createIssues(queue, cohort, 2000)
+  return new Promise(function(resolve, reject) {
+    createIssues(queue, cohort, 2000)
+      .then(msg => {
+        console.log("post Assignments", msg);
+        resolve(msg)
+      })
+  });
 }
 
-function assign (issue, assignees) {
-  return assignees.map((assignee) => {
-    return Object.assign({}, issue, { assignee: assignee })
-  })
+function assign (issue, assignee) {
+  return Object.assign({}, issue, { assignee: assignee })
 }
 
 function createIssues (queue, cohort, delay) {
@@ -31,28 +35,39 @@ function createIssues (queue, cohort, delay) {
   // https://developer.github.com/guides/best-practices-for-integrators/#dealing-with-abuse-rate-limits
   process.stdout.write(`Posting assignments using ${delay / 1000}s delay...`)
   const client = github.client(process.env['WTR_ACCESS_TOKEN'])
-
-  let promises = []
-  const id = setInterval(() => {
-    let issue = queue.pop()
-    if (!issue) {
-      clearInterval(id)
-      return Promise.all(promises)
-    }
-    promises.push(createIssue(client, issue, cohort, cohort))
-    // process.stdout.write('.ha')
-  }, delay)
+  return new Promise(function(resolve, reject) {
+    createIssue(client, cohort, queue, queue.length - 1)
+      .then((msg) => {
+        console.log("create issues", msg);
+        resolve(msg)
+      })
+  });
+  // const id = setInterval(() => {
+  //   let issue = queue.pop()
+  //   if (!issue) {
+  //     clearInterval(id)
+  //     return Promise.all(promises)
+  //   }
+  //   promises.push(createIssue(client, issue, 'phase-0', ohort))
+  //   // process.stdout.write('.ha')
+  // }, delay)
 }
 
-function createIssue (client, issue, owner, repo) {
+function createIssue (client, cohort, issues, idx) {
   return new Promise((resolve, reject) => {
-    client.repo(`${owner}/${repo}`)
+    let issue = issues[idx]
+    console.log({idx});
+    client.repo(`phase-0/${cohort}`)
       .issue(issue, (err, response) => {
         if (err) {
           console.error(err)
           return reject(new Error(`Couldn't post issue: ${issue.title}.`))
         }
-        return resolve(response)
+        if (idx === 0) {
+          console.log("finished issues", idx);
+          resolve('done')
+        }
+        else setTimeout(() =>  resolve(createIssue(client, cohort, issues, idx-1)), 2000)
       })
   })
 }
