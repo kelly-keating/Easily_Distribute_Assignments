@@ -68,14 +68,14 @@ function selectStudent({name, last_name, github_name, cohort_name, current_sprin
   console.log(cohort_name);
   console.log("");
   if (current_sprint < 9) console.log(`p: push next sprint (${current_sprint + 1})`)
-  if (current_sprint < 8) console.log("s: Specify sprint to push")
+  console.log("s: Specify sprint to push")
   console.log("D / del: Delete");
   console.log("c: Cancel");
   const rl = create()
   rl.question('What would you like to do?: ', answer => {
     rl.close()
     if (answer.toLowerCase() == 'p' && current_sprint < 9) pushSprint(github_name, cohort_name, current_sprint + 1)
-    if (answer.toLowerCase() == 's' && current_sprint < 9) specifySprint(github_name, cohort_name, current_sprint)
+    if (answer.toLowerCase() == 's') specifySprint(github_name, cohort_name, current_sprint)
     if (answer.toLowerCase() == "c") startPrompt()
     if (answer.toLowerCase() == "del" || answer == 'D') deleteStudent(github_name)
   })
