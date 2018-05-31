@@ -54,27 +54,29 @@ function askGithub (student) {
       rl.close()
       if (!answer) reject("No username given")
       student.github_name = answer
-      resolve(askCohort(student))
+      student.cohort_id = 2
+      student.current_sprint = 0
+      resolve(student)
     })
   });
 }
 
-function askCohort (student) {
-  return new Promise(function(resolve, reject) {
-    db.getCohorts()
-      .then(cohorts => {
-        const rl = create()
-        console.log(" ");
-        cohorts.forEach(({cohort_name}, i) => console.log(`${i}: ${cohort_name}`))
-        rl.question("enter the corresponding cohort number: ", answer => {
-          rl.close()
-          if (!answer || isNaN(answer)) return resolve(askCohort(student))
-          else if (answer >= 0 && answer < cohorts.length) student.cohort_id = Number(answer) + 1
-          resolve(askSprint(student))
-        })
-      })
-  })
-}
+// function askCohort (student) {
+//   return new Promise(function(resolve, reject) {
+//     db.getCohorts()
+//       .then(cohorts => {
+//         const rl = create()
+//         console.log(" ");
+//         cohorts.forEach(({cohort_name}, i) => console.log(`${i}: ${cohort_name}`))
+//         rl.question("enter the corresponding cohort number: ", answer => {
+//           rl.close()
+//           if (!answer || isNaN(answer)) return resolve(askCohort(student))
+//           else if (answer >= 0 && answer < cohorts.length) student.cohort_id = Number(answer) + 1
+//           resolve(askSprint(student))
+//         })
+//       })
+//   })
+// }
 
 function askSprint (student) {
   return new Promise(function(resolve, reject) {
