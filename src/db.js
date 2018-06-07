@@ -29,6 +29,17 @@ function headers () {
   return console.log(`${f("name", 15, "underline")}${f("last name", 15, "underline")} ${f("sprnt", 5, "underline")} @${f("githubname", 20, "underline")}`)
 }
 
+function activeSplitter (students) {
+  var active = []
+  var inactive = []
+
+  students.forEach((student) => {
+    let howLong = moment(student.last_update).tz('Pacific/Auckland').fromNow()
+    howLong.includes('months') ? inactive.push(student) : active.push(student)
+  })
+  return {active, inactive}
+}
+
 function alphabetSorter (students) {
   var sorted = []
 
@@ -64,12 +75,10 @@ module.exports = {
     .orderBy('current_sprint', 'asc')
     .then(students => {
       headers()
-
-      alphabetSorter(students).forEach(printStudent)
-      const active = students.filter(student => {
-        const fromNow = moment(student.last_update).tz('Pacific/Auckland').fromNow()
-        return !fromNow.includes('months')
-      }).length
-      console.log(`Students in system: ${students.length} - ${active} Active`);
+      let status = activeSplitter(alphabetSorter(students))
+      status.inactive.forEach(printStudent)
+      console.log(`----- ACTIVE: (${status.active.length}) -----`)
+      status.active.forEach(printStudent)
+      console.log(`\nStudents in system: ${students.length}`)
     })
 }

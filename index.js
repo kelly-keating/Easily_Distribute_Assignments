@@ -27,7 +27,7 @@ function startPrompt () {
         console.log({output})
         startPrompt()
       })
-    else if (answer == 'l') db.listAll()
+    else if (answer == 'l' || answer == 'ls') db.listAll()
       .then(() => startPrompt())
     else if (answer == "D") markDone()
       .then(() => startPrompt())
