@@ -29,6 +29,8 @@ function startPrompt () {
       })
     else if (answer == 'l' || answer == 'ls') db.listAll()
       .then(() => startPrompt())
+    else if (answer == 's') db.printSprints()
+      .then(() => startPrompt())
     else if (answer == "D") markDone()
       .then(() => startPrompt())
     else db.findStudent(answer)

@@ -55,6 +55,17 @@ function alphabetSorter (students) {
   return sorted
 }
 
+function printSprintCount (students) {
+  var sprints = new Array(9).fill(0)
+  students.forEach((student) => {
+    sprints[student.current_sprint-1]++
+  })
+  console.log()
+  sprints.forEach((count, i) => {
+    console.log(`Sprint${i+1}  (${count}) : ${new Array(count).fill("I").join("")}`)
+  })
+}
+
 module.exports = {
   findStudent: (name) => knex('students')
     .where('name', 'like', `${name}%`)
@@ -80,5 +91,10 @@ module.exports = {
       console.log(`----- ACTIVE: (${status.active.length}) -----`)
       status.active.forEach(printStudent)
       console.log(`\nStudents in system: ${students.length}`)
-    })
+    }),
+    printSprints: () => knex('students')
+      .then(students => {
+        let status = activeSplitter(students)
+        printSprintCount(status.active)
+      })
 }
