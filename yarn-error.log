@@ -1885,7 +1885,7 @@ Lockfile:
 
 Trace: 
   Error: Command failed.
-  Exit code: 1
+  Exit code: 3221225786
   Command: C:\WINDOWS\system32\cmd.exe
   Arguments: /d /s /c node index.js
   Directory: C:\Users\engie\EngieMatene\phase-0-teaching\Easily_Distribute_Assignments
